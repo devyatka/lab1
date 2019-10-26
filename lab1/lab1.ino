@@ -16,8 +16,9 @@ Buzzer buzzer2(PIN_BUZZER2);
 Buzzer buzzer3(PIN_BUZZER3);
 Buzzer buzzer4(PIN_BUZZER4);
 Buzzer buzzers[] = {buzzer1, buzzer2, buzzer3, buzzer4};
+int buzzerCount = 4;
 
-bool start = false;
+bool started = false;
 int notes1[] = {NOTE_G3};
 int notes2[] = {NOTE_A2};
 double durations[] = {8};
@@ -36,17 +37,17 @@ void setup() {
 void loop() {
 
     if (buttonOn.wasPressed()){
-      start = true;
+      started = true;
       buzzers[currentBuzzer].turnSoundOn();
       lastMillis = millis();
     }
 
-    if (start){
-      buzzers[currentBuzzer % 4].playSound();
+    if (started){
+      buzzers[currentBuzzer % buzzerCount].playSound();
       if ((millis() - lastMillis) > soundDuration){
-        buzzers[currentBuzzer % 4].turnSoundOff();
+        buzzers[currentBuzzer % buzzerCount].turnSoundOff();
         currentBuzzer++;
-        buzzers[currentBuzzer % 4].turnSoundOn();
+        buzzers[currentBuzzer % buzzerCount].turnSoundOn();
         lastMillis = millis();
       }
     }
