@@ -9,47 +9,38 @@
 #define PIN_BUZZER4 4
 #define PIN_BUTTON_ON 6
 
-
 Button buttonOn(PIN_BUTTON_ON); 
-Buzzer buzzer1(PIN_BUZZER1);
-Buzzer buzzer2(PIN_BUZZER2);
-Buzzer buzzer3(PIN_BUZZER3);
-Buzzer buzzer4(PIN_BUZZER4);
-Buzzer buzzers[] = {buzzer1, buzzer2, buzzer3, buzzer4};
+int buzzersPins[] = {PIN_BUZZER1, PIN_BUZZER2, PIN_BUZZER3, PIN_BUZZER4};
 int buzzerCount = 4;
 
 bool started = false;
-int notes1[] = {NOTE_G3};
-int notes2[] = {NOTE_A2};
-double durations[] = {8};
-int melodyLength = 1;
+int note = NOTE_G3;
 int currentBuzzer = 0;
-int soundDuration = 1000;
+int soundDuration = 500;
 uint64_t lastMillis;
 
 void setup() {
-    buzzers[0].setMelody(notes1, durations, melodyLength);
-    buzzers[1].setMelody(notes2, durations, melodyLength);
-    buzzers[2].setMelody(notes1, durations, melodyLength);
-    buzzers[3].setMelody(notes2, durations, melodyLength);
 }
 
 void loop() {
 
     if (buttonOn.wasPressed()){
-      started = true;
-      buzzers[currentBuzzer].turnSoundOn();
-      lastMillis = millis();
-    }
-
-    if (started){
-      buzzers[currentBuzzer % buzzerCount].playSound();
-      if ((millis() - lastMillis) > soundDuration){
-        buzzers[currentBuzzer % buzzerCount].turnSoundOff();
-        currentBuzzer++;
-        buzzers[currentBuzzer % buzzerCount].turnSoundOn();
+      if (started) {
+        started = false;
+        noTone(buzzersPins[currentBuzzer]);
+      }
+      else {
+        started = true;
         lastMillis = millis();
       }
     }
-    
+
+    if (started){
+      tone(buzzersPins[currentBuzzer], note);
+      if ((millis() - lastMillis) > soundDuration){
+        noTone(buzzersPins[currentBuzzer]);
+        currentBuzzer = (currentBuzzer + 1) % buzzerCount;
+        lastMillis = millis();
+      }
+    }
 }
